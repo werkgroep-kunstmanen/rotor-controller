@@ -144,7 +144,7 @@ int readCommand(char ch,GOTO_VAL *gotoval,int *eval)
   }
   else if (ch)
   { // still collecting line
-    if (pos < BUFLEN-1)
+    if (pos < BUFLEN-2)
     {
       buf[pos++]=ch; buf[pos]=0;
     }
