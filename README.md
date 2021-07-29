@@ -1,2 +1,37 @@
 # rotor-controller
-Arduino controller for DC and stepper motors 
+Rotorcontrol for Arduino Uno/Nano.
+For:
+. DC motors with end switch and parallel diode
+. stepper motors, using accel library, with end detections
+
+
+Files:
+
+calibrate.ino	calibration function to run in setup
+command.ino	read commands from USB
+rotorfuncs.ino	rotor drive related functions
+rotorctrl.ino	top-level; contains setup(), loop() and interrupt functions
+misc.ino	some misc functions, for display, feedback etc.
+pins.ino	definitions of pins
+rotorctrl.h	definitions of special types, including rotor records
+		Includes rotor_spec.h
+rotor_spec.h	contains all info of rotors, Arduino-pinning etc.
+
+
+NOTE: rotor_spec.h is the only file to customize for rotor specs:
+. pinning of Arduino for both rotors
+. enable 1 or 2 rotors
+. motor type: DC or stepper
+. rotor type: 
+  . X/Y
+  . elevation/azimut:
+    . 90/360
+    . 180/180 degrees with east/west pass info
+
+. motor run parameters: 
+.   PWM frequency
+.   min. / max. speed, accelleration (stepper)
+.   offset and pulses/steps -to- degrees factors
+.   error degrees threshold from where speed wil increase with increasing error
+.   error degrees threshold from where speed is max.
+
