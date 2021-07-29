@@ -100,12 +100,12 @@ void send_stat(ROTOR *AX_rot,ROTOR *EY_rot)
   int stat_ax=-1,stat_ey=-1;
   if (AX_rot) stat_ax=AX_rot->cal_status;
   if (EY_rot) stat_ey=EY_rot->cal_status;
-  sprintf(cmd,"STAT: ax=%d  ey=%d\n",stat_ax,stat_ey); swrite(cmd);
+  sprintf(cmd,"STAT: ax=%8d  ey=%8d\n",stat_ax,stat_ey); swrite(cmd);
 }
 
 void send_pos(ROTOR *AX_rot,ROTOR *EY_rot)
 {
-  char cmd[30];
+  char cmd[128]; // to be on the safe side, currently 22 characters + 4 floats en 2 ints
   float axpos_degr=0.,axreq_degr=0.,eypos_degr=0.,eyreq_degr=0.;
   int ax_speed=0,ey_speed=0;
   if (AX_rot) 
@@ -130,7 +130,7 @@ void send_pos(ROTOR *AX_rot,ROTOR *EY_rot)
 
 void fdispl(int x,int y,char *s,float n)
 {
-  char str[20];
+  char str[256]; // XXX as we do not know size of s this is not safe
   sprintf(str,"%s=",s);
   dtostrf(n,6, 1, str+strlen(s)+1);
   xprint(x,y,str);
@@ -138,7 +138,7 @@ void fdispl(int x,int y,char *s,float n)
 
 void idispl(int x,int y,char *s,int n)
 {
-  char str[20];
+  char str[256]; // XXX as we do not know size of s this is not safe
   sprintf(str,"%s=%4d",s,n);
   xprint(x,y,str);
 }
@@ -161,13 +161,13 @@ void pos2displ(ROTOR *rot)
 void rec2displ(int ep,float ax,float ey)
 {
   static int nr;
-  char str[21],str1[10],str2[10];
+  char str[32],str1[10],str2[10];
 
   dtostrf(ax,5, 1, str1);
   dtostrf(ey,5, 1, str2);
   sprintf(str,"cmd: %d  %5s  %5s",ep,str1,str2);
 
-  str[20]=0;
+  str[31]=0;
   //xprint(0,0,str);
   
   sprintf(str,"nr=%d",++nr);
