@@ -35,3 +35,9 @@ NOTE: rotor_spec.h is the only file to customize for rotor specs:
 .   error degrees threshold from where speed wil increase with increasing error
 .   error degrees threshold from where speed is max.
 
+Calibration:
+. may be done in 2 steps, first fast, second slow and accurate.
+. SPD_ENDSW1 and SPD_ENDSW2 are the speeds in percentage of max. speed defined:
+.   DC-motor: max. speed defined by hardware/voltage
+.   stepper motor: defined by xx_MotorSpeed
+. If one of 2 speeds is defined 0 then a single-calibration is done.
