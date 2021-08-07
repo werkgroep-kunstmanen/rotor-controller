@@ -68,44 +68,49 @@ void xprint(int x,int y,char *s)
 
 // delay between 2 write actions, to prevent buffer overflow
 #define SERDEL 100
+#define STRLEN 40
 void send_specs(ROTOR *AX_rot,ROTOR *EY_rot)
 {
-  char cmd[40];
-  sprintf(cmd,"SPEC: Release %s\n",RELEASE);                  swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: AX_POffset     =%d\n",AX_POffset);       swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: EY_POffset     =%d\n",EY_POffset);       swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: AX_REFPOS      =%d\n",AX_REFPOS);        swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: EY_REFPOS      =%d\n",EY_REFPOS);        swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: AX_STEPS_DEGR  =%d\n",AX_STEPS_DEGR);    swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: EY_STEPS_DEGR  =%d\n",EY_STEPS_DEGR);    swrite(cmd); delay(SERDEL);
+  char cmd[STRLEN];
+  snprintf(cmd,STRLEN,"SPEC: Release %s\n",RELEASE);                  swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: AX_POffset     =%d\n",AX_POffset);       swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: EY_POffset     =%d\n",EY_POffset);       swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: AX_REFPOS      =%d\n",AX_REFPOS);        swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: EY_REFPOS      =%d\n",EY_REFPOS);        swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: AX_STEPS_DEGR  =%d\n",AX_STEPS_DEGR);    swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: EY_STEPS_DEGR  =%d\n",EY_STEPS_DEGR);    swrite(cmd); delay(SERDEL);
  #if MOTORTYPE == MOT_STEPPER
-  sprintf(cmd,"SPEC: AX_MotorSpeed  =%d\n",AX_MotorSpeed);    swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: AX_MotorAccel  =%d\n",AX_MotorSpeed);    swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: EY_MotorSpeed  =%d\n",EY_MotorSpeed);    swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: EY_MotorAccel  =%d\n",EY_MotorSpeed);    swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: AX_MotorSpeed  =%d\n",AX_MotorSpeed);    swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: AX_MotorAccel  =%d\n",AX_MotorSpeed);    swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: EY_MotorSpeed  =%d\n",EY_MotorSpeed);    swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: EY_MotorAccel  =%d\n",EY_MotorSpeed);    swrite(cmd); delay(SERDEL);
  #else
-  sprintf(cmd,"SPEC: MINSPEED       =%d\n",MINSPEED);         swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: MAXSPEED       =%d\n",MAXSPEED);         swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: L_DEGR_MAXSPEED=%d\n",L_DEGR_MAXSPEED);  swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: H_DEGR_MINSPEED=%d\n",H_DEGR_MINSPEED);  swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: D_DEGR_STOP    =%d\n",D_DEGR_STOP);      swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: PWMFreq        =%d\n",PWMFreq);          swrite(cmd); delay(SERDEL);
-  sprintf(cmd,"SPEC: MAX_PWM        =%d\n",MAX_PWM);          swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: MINSPEED       =%d\n",MINSPEED);         swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: MAXSPEED       =%d\n",MAXSPEED);         swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: L_DEGR_MAXSPEED=%d\n",L_DEGR_MAXSPEED);  swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: H_DEGR_MINSPEED=%d\n",H_DEGR_MINSPEED);  swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: D_DEGR_STOP    =%d\n",D_DEGR_STOP);      swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: PWMFreq        =%d\n",PWMFreq);          swrite(cmd); delay(SERDEL);
+  snprintf(cmd,STRLEN,"SPEC: MAX_PWM        =%d\n",MAX_PWM);          swrite(cmd); delay(SERDEL);
  #endif
 }
 
 void send_stat(ROTOR *AX_rot,ROTOR *EY_rot)
 {
-  char cmd[30];
+  char cmd[STRLEN];
   int stat_ax=-1,stat_ey=-1;
   if (AX_rot) stat_ax=AX_rot->cal_status;
   if (EY_rot) stat_ey=EY_rot->cal_status;
-  sprintf(cmd,"STAT: ax=%d  ey=%d\n",stat_ax,stat_ey); swrite(cmd);
+  snprintf(cmd,STRLEN,"STAT: ax=%d  ey=%d\n",stat_ax,stat_ey); swrite(cmd);
 }
 
+#undef STRLEN
+// max. stringlen=23+4*6+2*3=53
+#define STRLEN 60
 void send_pos(ROTOR *AX_rot,ROTOR *EY_rot)
 {
-  char cmd[30];
+  char cmd[STRLEN];
+  char sdig[4][10];
   float axpos_degr=0.,axreq_degr=0.,eypos_degr=0.,eyreq_degr=0.;
   int ax_speed=0,ey_speed=0;
   if (AX_rot) 
@@ -120,26 +125,28 @@ void send_pos(ROTOR *AX_rot,ROTOR *EY_rot)
     eyreq_degr=EY_rot->req_degr;
     ey_speed  =EY_rot->speed;
   }
-  sprintf(cmd,"pos=[");               dtostrf(axpos_degr,6, 1, cmd+strlen(cmd));
-  sprintf(cmd+strlen(cmd),",");       dtostrf(eypos_degr,6, 1, cmd+strlen(cmd));
-  sprintf(cmd+strlen(cmd),"] req=["); dtostrf(axreq_degr,6, 1, cmd+strlen(cmd));
-  sprintf(cmd+strlen(cmd),",");       dtostrf(eyreq_degr,6, 1, cmd+strlen(cmd));
-  sprintf(cmd+strlen(cmd),"] spd=[%d,%d]",ax_speed,ey_speed); 
+  // floating: -123.4 so min. len buf=6 + 1 (for '0')
+  dtostrf(axpos_degr,6, 1, sdig[0]);
+  dtostrf(eypos_degr,6, 1, sdig[1]);
+  dtostrf(axreq_degr,6, 1, sdig[2]);
+  dtostrf(eyreq_degr,6, 1, sdig[3]);
+  // max. len=23+4*6+2*3=53
+  snprintf(cmd,STRLEN,"pos=[%s,%s] req=[%s,%s] spd=[%d,%d]",sdig[0],sdig[1],sdig[2],sdig[3],ax_speed,ey_speed);
   swrite(cmd);
 }
 
 void fdispl(int x,int y,char *s,float n)
 {
-  char str[20];
-  sprintf(str,"%s=",s);
+  char str[21];
+  snprintf(str,20-6,"%s=",s);      // len will get max. 6 extra characters
   dtostrf(n,6, 1, str+strlen(s)+1);
   xprint(x,y,str);
 }
 
 void idispl(int x,int y,char *s,int n)
 {
-  char str[20];
-  sprintf(str,"%s=%4d",s,n);
+  char str[21];
+  snprintf(str,20,"%s=%4d",s,n);
   xprint(x,y,str);
 }
 
@@ -161,17 +168,16 @@ void pos2displ(ROTOR *rot)
 void rec2displ(int ep,float ax,float ey)
 {
   static int nr;
-  char str[21],str1[10],str2[10];
+  char str[31],str1[10],str2[10];
 
-  dtostrf(ax,5, 1, str1);
-  dtostrf(ey,5, 1, str2);
-  sprintf(str,"cmd: %d  %5s  %5s",ep,str1,str2);
-
-  str[20]=0;
-  //xprint(0,0,str);
+  dtostrf(ax,6, 1, str1);
+  dtostrf(ey,6, 1, str2);
+  snprintf(str,30,"cmd: %d  %6s  %6s",ep,str1,str2);
+  str[30]=0;
+  xprint(0,0,str);
   
-  sprintf(str,"nr=%d",++nr);
-  //xprint(0,1,str);
+  snprintf(str,30,"nr=%d",++nr);
+  xprint(0,1,str);
 }
 
 void blink(int n,int d)
