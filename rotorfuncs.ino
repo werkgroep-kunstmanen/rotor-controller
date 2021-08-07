@@ -12,7 +12,6 @@
  *   long from_degr(ROTOR *rot)
  *   void convert_eastwest(GOTO_VAL *gv)
  *   int run_safe(ROTOR *rot,boolean cont)
- *   int rotor_speed(ROTOR *rot,float deg)
  *   void run_motor(ROTOR *rot,int speed)
  *   int rotor_goto(ROTOR *rot,float val)
  *   void reset_to_pos(ROTOR *rot,long pos)
@@ -126,18 +125,22 @@ static void moveto(ROTOR *rot)
 // run if not at end-stop with speed in wrong drection
 int run_safe(ROTOR *rot,boolean cont)
 {
+  int curspeed;
   int running=1;
   int end1=0,end2=0;
-  int curspeed=CMDP(rot,speed()); // = rot->speed?
   if (!rot) return 0;
+  curspeed=CMDP(rot,speed()) * 100 / CMDP(rot,maxSpeed());
+
+  rot->speed=(curspeed>100? 100 : curspeed<-100? -100: curspeed);
 
   end1=digitalRead(rot->pin_end1);
   end2=digitalRead(rot->pin_end2);
 
   if (((end1) && (curspeed>0)) || ((end2) && (curspeed<0)))
   {
-    CMDP(rot,stop());
-    running=0;                      // stops
+    CMDP(rot,setSpeed(0));          // force internally saved speed to 0
+    CMDP(rot,stop());               // force stop
+    running=0;                      //
   }
   else
   {
@@ -146,7 +149,7 @@ int run_safe(ROTOR *rot,boolean cont)
     else
       CMDP(rot,run());
     rot->rotated=CMDP(rot,currentPosition());
-    running=1;
+    if (!curspeed) running=0;
   }
   return running;
 }
@@ -291,8 +294,10 @@ int rotor_goto(ROTOR *rot,float val)
   #endif
 
   rot->req_degr=val;                      // requested degrees
-  req_degr=val;
-  rot_degr=to_degr(rot);                  // actual degrees
+  rot->degr=to_degr(rot);
+
+  req_degr=rot->req_degr;
+  rot_degr=rot->degr;                  // actual degrees
 
   #if MOTORTYPE == MOT_STEPPER
     moveto(rot);
