@@ -1,4 +1,8 @@
 # rotor-controller
+OLD, use rotorctrl!!! This repo will be removed!
+
+
+
 Rotorcontrol for Arduino Uno/Nano.
 For:
 . DC motors with end switch and parallel diode
